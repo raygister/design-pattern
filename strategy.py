@@ -45,6 +45,7 @@ class Order(object):  # 上下文
         return fmt.format(self.total(), self.due())
 
 
+# 传统实现：
 class Promotion(ABC):
     @abstractmethod
     def discount(self, order):
@@ -66,7 +67,6 @@ class CreditPromo(Promotion):
         return order.total() * 0.05 if order.customer.credit >= 1000 else 0
 
 
-# 传统实现方式
 class BulkItemPromo(Promotion):
     """
     单个商品为20个或以上时提供10%的折扣
@@ -90,7 +90,7 @@ class LargeOrderPromo(Promotion):
         return 0
 
 
-# python方式实现：具体策略没有内部状态即实例属性，更像是函数，而python函数就是一等对象，还省了策略类实例化对象的运行时开销
+# python实现：具体策略没有内部状态即实例属性，更像是函数，而python函数就是一等对象，还省了策略类实例化对象的运行时开销
 def credit_promo(order):
     return order.total() * 0.05 if order.customer.credit >= 1000 else 0
 
