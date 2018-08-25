@@ -1,0 +1,15 @@
+<book>
+    <author>Ray</author>
+    <publisher>Somebody Publishing</publisher>
+    <title>Python 3 Design Pattern</title>
+    <content>
+        <chapter>
+            <number>1</number>
+            <title>decorator pattern</title>
+        </chapter>
+        <chapter>
+            <number>2</number>
+            <title>observer pattern</title>
+        </chapter>
+    </content>
+</book>
