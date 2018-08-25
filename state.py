@@ -30,7 +30,7 @@ class Parser(object):
         self.parse_str = parse_str
         self.root = None
         self.curr_node = None
-        self.state = FirstTag()
+        self.state = first_tag
 
     def process(self, remaining_str):
         remaining = self.state.process(remaining_str, self)
@@ -48,7 +48,7 @@ class FirstTag(object):
         tag_name = remaining_str[index_start_tag + 1: index_end_tag]
         root = Node(tag_name)
         parser.root = parser.curr_node = root
-        parser.state = ChildNode()
+        parser.state = child_node
         return remaining_str[index_end_tag+1:]
 
 
@@ -58,11 +58,11 @@ class ChildNode(object):
         # 注意这里只做判断应该转移到哪个状态，并不处理解析
         stripped = remaining_str.strip()
         if stripped.startswith('</'):
-            parser.state = CloseTag()
+            parser.state = close_tag
         elif stripped.startswith('<'):
-            parser.state = OpenTag()
+            parser.state = open_tag
         else:
-            parser.state = TextNode()
+            parser.state = text_node
         return stripped
 
 
@@ -74,7 +74,7 @@ class OpenTag(object):
         node = Node(tag_name, parser.curr_node)  # 以当前节点作为父节点创造新节点
         parser.curr_node.children.append(node)  # 将新节点加到当前节点的子节点中
         parser.curr_node = node  # 开始标签了，迭代到新节点处理
-        parser.state = ChildNode()  # 状态转移
+        parser.state = child_node  # 状态转移
         return remaining_str[index_end_tag + 1:]
 
 
@@ -86,7 +86,7 @@ class CloseTag(object):
         tag_name = remaining_str[index_start_tag + 2: index_end_tag]  # 取出关闭标签的属性值
         assert tag_name == parser.curr_node.tag_name  # 确保关闭标签名与开始标签名相同
         parser.curr_node = parser.curr_node.parent  # 关闭标签了，返回父节点处理
-        parser.state = ChildNode()  # 状态转移
+        parser.state = child_node  # 状态转移
         return remaining_str[index_end_tag + 1:].strip()
 
 
@@ -96,8 +96,16 @@ class TextNode(object):
         index_start_tag = remaining_str.find('<')
         text = remaining_str[:index_start_tag]
         parser.curr_node.text = text  # 把标签对应文本设置为当前节点的属性值
-        parser.state = ChildNode()  # 状态转移
+        parser.state = child_node  # 状态转移
         return remaining_str[index_start_tag:]
+
+
+# python的模块变量能够模仿单例，这里我们创建了可被重用的状态类实例
+first_tag = FirstTag()
+child_node = ChildNode()
+open_tag = OpenTag()
+close_tag = CloseTag()
+text_node = TextNode()
 
 
 if __name__ == '__main__':
