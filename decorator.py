@@ -25,6 +25,11 @@ def test1(a, b):
     print('\ttest1 called')
 
 
+# @decorator
+# def target():
+#     pass
+# 相当于：
+# target = decorator(target)
 @log_calls
 def test2(a, b, name):
     print('\ttest2 called')
